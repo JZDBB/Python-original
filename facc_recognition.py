@@ -5,6 +5,7 @@ import traceback
 import cv2
 import wx
 import numpy as np
+import time
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)
@@ -32,7 +33,7 @@ class ShowCapture(wx.Frame):
 
         # create a grid sizer with 5 pix between each cell
         sizer = wx.GridBagSizer(5, 5)
-        self.flag = 0;
+        self.flag = 0
 
         self.capture = capture
         ret, frame = self.capture.read()
@@ -43,7 +44,7 @@ class ShowCapture(wx.Frame):
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        self.bmp = wx.BitmapFromBuffer(width, height, frame)
+        self.bmp = wx.Bitmap.FromBuffer(width, height, frame)
 
         #creat statictest display
 
@@ -96,41 +97,46 @@ class ShowCapture(wx.Frame):
         print("delete")
 
     def NextFrame(self, event):
-        ret, self.orig_frame = self.capture.read()
-        if ret:
-            # if self.flag:
-            #     small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
-            #     face_location = face_recognition.face_locations(small_frame)
-            #
-            #     if len(face_location) > 1:
-            #         cv2.putText(frame, 'please ensure there is only one person in the picture!', (0, 20),
-            #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-            #     elif len(face_location) == 1:
-            #         ok = True
-            #         cv2.putText(frame, 'please type "c" to take the picture!', (0, 20),
-            #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-            #     else:
-            #         cv2.putText(frame, 'no face detected!', (0, 20),
-            #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-            #     cv2.imshow('', frame)
-            #     k = cv2.waitKey(1)
-            #     if k & 0xFF == ord('q'):
-            #         print('quit!')
-            #         break
-            #     elif k & 0xFF == ord('c'):
-            #         print('collect ' + name + "'s data successfully!")
-            #         cv2.imwrite('./known/' + name + '.jpg', frame)
-            #         break
+        try:
+            time.sleep(0.03)
+            ret, self.orig_frame = self.capture.read()
+            if ret:
+                # if self.flag:
+                #     small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
+                #     face_location = face_recognition.face_locations(small_frame)
+                #
+                #     if len(face_location) > 1:
+                #         cv2.putText(frame, 'please ensure there is only one person in the picture!', (0, 20),
+                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
+                #     elif len(face_location) == 1:
+                #         ok = True
+                #         cv2.putText(frame, 'please type "c" to take the picture!', (0, 20),
+                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
+                #     else:
+                #         cv2.putText(frame, 'no face detected!', (0, 20),
+                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
+                #     cv2.imshow('', frame)
+                #     k = cv2.waitKey(1)
+                #     if k & 0xFF == ord('q'):
+                #         print('quit!')
+                #         break
+                #     elif k & 0xFF == ord('c'):
+                #         print('collect ' + name + "'s data successfully!")
+                #         cv2.imwrite('./known/' + name + '.jpg', frame)
+                #         break
 
 
 
-            frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
 
-            self.bmp.CopyFromBuffer(frame)
-            self.ImgControl.SetBitmap(self.bmp)
+                self.bmp.CopyFromBuffer(frame)
+                self.ImgControl.SetBitmap(self.bmp)
 
-        else:
-            print("camera error")
+            else:
+                print("camera error")
+        except:
+            traceback.print_exc()
+            print("error")
 
 
 
