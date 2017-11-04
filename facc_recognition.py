@@ -43,8 +43,12 @@ class ShowCapture(wx.Frame):
         self.orig_width = width
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        cv2.putText(frame, 'initiating...', (0, 0), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 1)
 
         self.bmp = wx.Bitmap.FromBuffer(width, height, frame)
+
+        self.statusbar = self.CreateStatusBar()
+        self.statusbar.SetStatusText("initiating...")
 
         #creat statictest display
 
@@ -128,7 +132,6 @@ class ShowCapture(wx.Frame):
 
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
-
                 self.bmp.CopyFromBuffer(frame)
                 self.ImgControl.SetBitmap(self.bmp)
 
