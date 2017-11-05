@@ -27,7 +27,7 @@ import time
 #     ret, frame = video_capture.read()
 
 class ShowCapture(wx.Frame):
-    def __init__(self, capture, fps=15):
+    def __init__(self, capture, fps=12):
         wx.Frame.__init__(self, None)
         panel = wx.Panel(self, -1)
 
@@ -38,12 +38,12 @@ class ShowCapture(wx.Frame):
         self.capture = capture
         ret, frame = self.capture.read()
 
-        height, width = frame.shape[:2]
-        self.orig_height = height
-        self.orig_width = width
+        self.height, self.width = frame.shape[:2]
+        self.orig_height = self.height
+        self.orig_width = self.width
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        self.bmp = wx.Bitmap.FromBuffer(width, height, frame)
+        self.bmp = wx.Bitmap.FromBuffer(self.width, self.height, frame)
 
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetStatusText("initiating...")
@@ -51,12 +51,13 @@ class ShowCapture(wx.Frame):
         image_names = os.listdir('./known')
         self.known_encodings = []
         self.names = []
-        for image_name in image_names:
-            image = face_recognition.load_image_file(os.path.join("./known", image_name))
-            face_encoding = face_recognition.face_encodings(image)[0]
-            self.known_encodings.append(face_encoding)
-            self.names.append(os.path.splitext(image_name)[0])
-            print(image_name)
+        if len(image_names)!=0:
+            for image_name in image_names:
+                image = face_recognition.load_image_file(os.path.join("./known", image_name))
+                face_encoding = face_recognition.face_encodings(image)[0]
+                self.known_encodings.append(face_encoding)
+                self.names.append(os.path.splitext(image_name)[0])
+                print(image_name)
         print('Done!')
 
         # create image display widgets
@@ -87,6 +88,7 @@ class ShowCapture(wx.Frame):
         self.timer = wx.Timer(self)
         self.fps = fps
         self.timer.Start(1000. / self.fps)
+        self.i = 0
 
         #bind timer events to the handler
         self.Bind(wx.EVT_TIMER, self.NextFrame)
@@ -105,11 +107,12 @@ class ShowCapture(wx.Frame):
         print("recognite")
 
     def onClickDelete(self, event):
+        self.str = self.nameTest.GetValue()
+
         print("delete")
 
     def NextFrame(self, event):
         try:
-            time.sleep(0.03)
             ret, self.orig_frame = self.capture.read()
             if ret:
                 small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
@@ -119,23 +122,23 @@ class ShowCapture(wx.Frame):
                     self.statusbar.SetStatusText('please ensure there is only one person in the picture!')
                 elif len(face_location) == 1:
                     if self.flag == 0:
-                        face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
-                        distance = face_recognition.face_distance(self.known_encodings, face_encoding)
-                        idx = np.argmin(distance)
-                        if distance[idx] < 0.6:
-                            prediction = self.names[idx]+ ' opened'
-                        else:
-                            prediction = 'Unknown locked'
+                        if len(self.known_encodings)!=0:
+                            face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
+                            distance = face_recognition.face_distance(self.known_encodings, face_encoding)
+                            idx = np.argmin(distance)
+                            if distance[idx] < 0.6:
+                                prediction = self.names[idx]+ ' opened'
+                            else:
+                                prediction = 'Unknown locked'
 
-                        for (top, right, bottom, left) in face_location:
-                            top *= 4
-                            right *= 4
-                            bottom *= 4
-                            left *= 4
+                            for (top, right, bottom, left) in face_location:
+                                top *= 4
+                                right *= 4
+                                bottom *= 4
+                                left *= 4
 
-                            cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                                cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
                             self.statusbar.SetStatusText(prediction)
-                            break
                     else:
                         cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
                         face_encoding = face_recognition.face_encodings(self.orig_frame)[0]
@@ -146,7 +149,10 @@ class ShowCapture(wx.Frame):
                     self.statusbar.SetStatusText('no face detected!')
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
-                self.bmp.CopyFromBuffer(frame)
+                self.i += 1
+                cv2.imwrite('./haha'+str(self.i)+'.jpg', frame)
+
+                self.bmp = wx.Bitmap.FromBuffer(self.width, self.height, frame)
                 self.ImgControl.SetBitmap(self.bmp)
 
             else:
