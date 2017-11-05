@@ -43,14 +43,21 @@ class ShowCapture(wx.Frame):
         self.orig_width = width
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        cv2.putText(frame, 'initiating...', (0, 0), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 1)
-
         self.bmp = wx.Bitmap.FromBuffer(width, height, frame)
 
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetStatusText("initiating...")
 
-        #creat statictest display
+        image_names = os.listdir('./known')
+        self.known_encodings = []
+        self.names = []
+        for image_name in image_names:
+            image = face_recognition.load_image_file(os.path.join("./known", image_name))
+            face_encoding = face_recognition.face_encodings(image)[0]
+            self.known_encodings.append(face_encoding)
+            self.names.append(os.path.splitext(image_name)[0])
+            print(image_name)
+        print('Done!')
 
         # create image display widgets
         self.ImgControl = statbmp.GenStaticBitmap(panel, wx.ID_ANY, self.bmp)
@@ -89,9 +96,9 @@ class ShowCapture(wx.Frame):
         deleteButton.Bind(wx.EVT_BUTTON, self.onClickDelete)
 
     def onClickCollect(self, event):
-        str = self.nameTest.GetValue()
+        self.str = self.nameTest.GetValue()
         self.flag = 1
-        print("collect", str)
+        print("collect", self.str)
 
     def onClickRecognite(self, event):
         self.flag = 0
@@ -105,31 +112,34 @@ class ShowCapture(wx.Frame):
             time.sleep(0.03)
             ret, self.orig_frame = self.capture.read()
             if ret:
-                # if self.flag:
-                #     small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
-                #     face_location = face_recognition.face_locations(small_frame)
-                #
-                #     if len(face_location) > 1:
-                #         cv2.putText(frame, 'please ensure there is only one person in the picture!', (0, 20),
-                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-                #     elif len(face_location) == 1:
-                #         ok = True
-                #         cv2.putText(frame, 'please type "c" to take the picture!', (0, 20),
-                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-                #     else:
-                #         cv2.putText(frame, 'no face detected!', (0, 20),
-                #                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
-                #     cv2.imshow('', frame)
-                #     k = cv2.waitKey(1)
-                #     if k & 0xFF == ord('q'):
-                #         print('quit!')
-                #         break
-                #     elif k & 0xFF == ord('c'):
-                #         print('collect ' + name + "'s data successfully!")
-                #         cv2.imwrite('./known/' + name + '.jpg', frame)
-                #         break
+                small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
+                face_location = face_recognition.face_locations(small_frame)
 
+                if len(face_location) > 1:
+                    self.statusbar.SetStatusText('please ensure there is only one person in the picture!')
+                elif len(face_location) == 1:
+                    if self.flag == 0:
+                        face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
+                        distance = face_recognition.face_distance(self.known_encodings, face_encoding)
+                        idx = np.argmin(distance)
+                        if distance[idx] < 0.6:
+                            prediction = self.names[idx]+ ' opened'
+                        else:
+                            prediction = 'Unknown locked'
 
+                        for (top, right, bottom, left) in face_location:
+                            top *= 4
+                            right *= 4
+                            bottom *= 4
+                            left *= 4
+
+                            cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                            self.statusbar.SetStatusText(prediction)
+                    else:
+                        cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
+                        self.flag = 0
+                else:
+                    self.statusbar.SetStatusText('no face detected!')
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
                 self.bmp.CopyFromBuffer(frame)
@@ -142,66 +152,6 @@ class ShowCapture(wx.Frame):
             print("error")
 
 
-
-
-
-
-
-
-
-
-#         self.timer = wx.Timer(self)
-#         self.Bind(wx.EVT_TIMER, self.update, self.timer)
-#
-#         collectButton = wx.ToggleButton(panel, label='collect', pos=(750, 20))
-#         recognitionButton = wx.ToggleButton(panel, label='recognite', pos=(750, 60))
-#         deleteButton = wx.ToggleButton(panel, label='delete', pos=(750, 100))
-#
-#         # self.cpnl = wx.Panel(pnl, pos=(150, 20), size=(110, 110))
-#         # self.cpnl.SetBackgroundColour(self.col)
-#
-#         collect.Bind(wx.EVT_TOGGLEBUTTON, self.ClickCollect)
-#         recognition.Bind(wx.EVT_TOGGLEBUTTON, self.ClickRecognite)
-#         delete.Bind(wx.EVT_TOGGLEBUTTON, self.ClickDelete)
-#
-#         self.cap = cv2.VideoCapture(0)
-#         ret, source = self.cap.read()
-#         img = cv2.cvtColor(np.uint8(source), cv2.COLOR_BGR2RGB)
-#         self.h, self.w = img.shape[0:2]
-#         # wxbmp = wx.BitmapFromBuffer(self.w, self.h, img)
-#         # wx.image = wx.StaticBitmap(parent=self, bitmap=wxbmp)
-#         self.timer.Start(50)
-#
-#         self.SetSize((1000, 450))
-#         self.SetTitle('face_recognition')
-#         self.Centre()
-#         self.Show(True)
-#
-#     def ClickCollect(self,e):
-#         print("cllection")
-#
-#     def ClickRecognite(self,e):
-#         print("recognition")
-#
-#     def ClickDelete(self,e):
-#         print("delete")
-#
-#     def update(self,e):
-#         ret, source = self.cap.read()
-#         img = cv2.cvtColor(np.uint8(source), cv2.COLOR_BGR2RGB)
-#         wxbmp = wx.Bitmap.FromBuffer(self.w, self.h, img)
-#         wx.StaticBitmap(parent=self, bitmap=wxbmp)
-#
-# def main():
-#     app = wx.App()
-#     MyFrame(None)
-#     app.MainLoop()
-#
-# if __name__ == "__main__":
-#     main()
-
-    # SetStatusText()
-    # 在状态栏上显示的文字
 capture = cv2.VideoCapture(0)
 
 app = wx.App()
