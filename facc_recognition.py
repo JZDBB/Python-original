@@ -135,8 +135,12 @@ class ShowCapture(wx.Frame):
 
                             cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
                             self.statusbar.SetStatusText(prediction)
+                            break
                     else:
                         cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
+                        face_encoding = face_recognition.face_encodings(self.orig_frame)[0]
+                        self.known_encodings.append(face_encoding)
+                        self.names.append(os.path.splitext(self.str)[0])
                         self.flag = 0
                 else:
                     self.statusbar.SetStatusText('no face detected!')
