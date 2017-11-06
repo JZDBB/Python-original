@@ -25,6 +25,28 @@ import time
 # while True:
 # #get frame
 #     ret, frame = video_capture.read()
+#
+# class RootDialog(wx.Dialog):
+#     def __init__(self, parent):
+#         wx.Dialog.__init__(self, parent)
+
+
+
+class UserDialog(wx.Dialog):
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent)
+        panel = wx.Panel(self, -1)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        userStaticText = wx.StaticText(panel, -1, 'Username:')
+        passwordTest = wx.StaticText(panel, -1, 'Password:')
+        sizer.Add(userStaticText, 0)
+        sizer.Add(passwordTest, 0)
+        panel.SetSizer(sizer)
+
+
+
+
 
 class ShowCapture(wx.Frame):
     def __init__(self, capture, fps=10):
@@ -64,7 +86,7 @@ class ShowCapture(wx.Frame):
         self.ImgControl = statbmp.GenStaticBitmap(panel, wx.ID_ANY, self.bmp)
 
         collectButton = wx.Button(panel, label='collect', pos=(20, 20), size=(125,40))
-        recognitionButton = wx.Button(panel, label='recognite', pos=(100, 80), size=(125,40))
+        recognitionButton = wx.Button(panel, label='open', pos=(100, 80), size=(125,40))
         deleteButton = wx.Button(panel, label='delete', pos=(100, 140), size=(125,40))
 
         self.nameTest = wx.TextCtrl(panel, value='',pos=(100,200), size=(270,40))#, validator=wx.TE_CENTER)
@@ -103,7 +125,11 @@ class ShowCapture(wx.Frame):
         print("collect", self.str)
 
     def onClickRecognite(self, event):
-        self.flag = 0
+        modal = UserDialog(self)
+        self.timer.Stop()
+        modal.ShowModal()
+        modal.Destroy()
+        self.timer.Start(1000. / self.fps)
         print("recognite")
 
     def onClickDelete(self, event):
