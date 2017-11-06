@@ -37,12 +37,14 @@ class RootDialog(wx.Dialog):
         sizer.Add(RootStaticText, 0)
         sizer.Add(RootText, 0)
 
-        boxsizer = wx.BoxSizer(wx.HORIZONTAL)
-        boxsizer.Add(openButton, 0)
-        panel.SetSizer(boxsizer)
+        # sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(openButton, 0)
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
+        sizer.SetSizeHints(self)
+        panel.Layout()
+        panel.SetFocus()
 
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
 
@@ -60,7 +62,7 @@ class UserDialog(wx.Dialog):
         UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
         pwText = wx.TextCtrl(panel, value='', size=(230, 30))
-        resignButton = wx.Button(panel, label='resign', pos=(0, 100), size=(110, 30))
+        resignButton = wx.Button(panel, label='registered', pos=(0, 100), size=(110, 30))
         openButton = wx.Button(panel, label='sign in', pos=(120, 100), size=(110,30))
         sizer.Add(userStaticText, 0)
         sizer.Add(UserText, 0)
@@ -74,6 +76,7 @@ class UserDialog(wx.Dialog):
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
+        self.SetSize((230,135))
 
         resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
