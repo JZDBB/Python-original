@@ -66,12 +66,12 @@ class RootDialog(wx.Dialog):
         if readpassword == rootPassword:
             self.flag_ok = 1
             self.StatusText.SetLabel('Accomplished!')
-            data = open("./Users/Users.txt")
-            try:
-                data.write(UserDialog.Username + ':' + UserDialog.password + '\n')
-                data.close()
-            except:
-                print('write error')
+            # data = open("./Users/Users.txt")
+            # try:
+            #     data.write(UserDialog.Username + ':' + UserDialog.password + '\n')
+            #     data.close()
+            # except:
+            #     print('write error')
         else:
             self.StatusText.SetLabel('Wrong password!')
         print('root')
@@ -118,6 +118,8 @@ class UserDialog(wx.Dialog):
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
         self.SetSize((230,135))
+        self.Username = self.UserText.GetValue()
+        self.password = self.pwText.GetValue() + '\n'
 
         resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
@@ -127,15 +129,25 @@ class UserDialog(wx.Dialog):
         self.password = self.pwText.GetValue()+'\n'
         modal = RootDialog(self)
         modal.ShowModal()
+        flag = modal.flag_ok
         modal.Destroy()
+        if flag:
+            data = open("./Users/Users.txt")
+            try:
+                data.write(self.Username + ':' + self.password + '\n')
+                data.close()
+            except:
+                print('write error')
+        else:
+            print('root error')
         print('resign')
 
     def onClickOpen(self, event):
-        Username = self.UserText.GetValue()
-        password = self.pwText.GetValue()+'\n'
+        self.Username = self.UserText.GetValue()
+        self.password = self.pwText.GetValue()+'\n'
         try:
-            idn = self.users.index(Username)
-            if password == self.passwords[idn]:
+            idn = self.users.index(self.Username)
+            if self.password == self.passwords[idn]:
                 print('opened')
             else:
                 print('wrong password!')
