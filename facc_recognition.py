@@ -39,12 +39,23 @@ class UserDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         userStaticText = wx.StaticText(panel, -1, 'Username:')
-        passwordTest = wx.StaticText(panel, -1, 'Password:')
+        UserText = wx.TextCtrl(panel, value='', size=(230, 30))
+        pwStaticText = wx.StaticText(panel, -1, 'Password:')
+        pwText = wx.TextCtrl(panel, value='', size=(230, 30))
+        resignButton = wx.Button(panel, label='resign', pos=(0, 100), size=(110, 30))
+        openButton = wx.Button(panel, label='sign in', pos=(120, 100), size=(110,30))
         sizer.Add(userStaticText, 0)
-        sizer.Add(passwordTest, 0)
+        sizer.Add(UserText, 0)
+        sizer.Add(pwStaticText, 0)
+        sizer.Add(pwText, 0)
+
+        boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+        boxsizer.Add(resignButton,0)
+        boxsizer.Add(openButton, 0)
+        panel.SetSizer(boxsizer)
+        # sizer.Add(resignButton, 0)
+        # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
-
-
 
 
 
