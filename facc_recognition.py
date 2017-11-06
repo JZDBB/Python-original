@@ -67,7 +67,7 @@ class ShowCapture(wx.Frame):
         recognitionButton = wx.Button(panel, label='recognite', pos=(100, 80), size=(125,40))
         deleteButton = wx.Button(panel, label='delete', pos=(100, 140), size=(125,40))
 
-        self.nameTest = wx.TextCtrl(panel, value='',pos=(100,200), size=(200,40))#, validator=wx.TE_CENTER)
+        self.nameTest = wx.TextCtrl(panel, value='',pos=(100,200), size=(270,40))#, validator=wx.TE_CENTER)
 
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
         box_sizer.Add(collectButton, 0)
