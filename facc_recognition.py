@@ -25,11 +25,29 @@ import time
 # while True:
 # #get frame
 #     ret, frame = video_capture.read()
-#
-# class RootDialog(wx.Dialog):
-#     def __init__(self, parent):
-#         wx.Dialog.__init__(self, parent)
 
+class RootDialog(wx.Dialog):
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent)
+        panel = wx.Panel(self, -1)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        RootStaticText = wx.StaticText(panel, -1, 'RootPassword:')
+        RootText = wx.TextCtrl(panel, value='', size=(230, 30))
+        openButton = wx.Button(panel, label='root', pos=(120, 100), size=(110, 30))
+        sizer.Add(RootStaticText, 0)
+        sizer.Add(RootText, 0)
+
+        boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+        boxsizer.Add(openButton, 0)
+        panel.SetSizer(boxsizer)
+        # sizer.Add(resignButton, 0)
+        # sizer.Add(openButton, 0)
+        panel.SetSizer(sizer)
+
+        openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
+
+    def onClickOpen(self, event):
+        print('root')
 
 
 class UserDialog(wx.Dialog):
@@ -56,6 +74,20 @@ class UserDialog(wx.Dialog):
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
+
+        resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
+        openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
+
+    def onClickResign(self, event):
+        modal = RootDialog(self)
+        modal.ShowModal()
+        modal.Destroy()
+        print('resign')
+
+    def onClickOpen(self, event):
+        print('open')
+
+
 
 
 
