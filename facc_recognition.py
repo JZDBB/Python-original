@@ -27,7 +27,7 @@ import time
 #     ret, frame = video_capture.read()
 
 class ShowCapture(wx.Frame):
-    def __init__(self, capture, fps=12):
+    def __init__(self, capture, fps=10):
         wx.Frame.__init__(self, None)
         panel = wx.Panel(self, -1)
 
@@ -108,8 +108,11 @@ class ShowCapture(wx.Frame):
 
     def onClickDelete(self, event):
         self.str = self.nameTest.GetValue()
-
-        print("delete")
+        os.remove('./known/'+ self.str + '.jpg')
+        idn = self.names.index(self.str)
+        del self.names[idn]
+        del self.known_encodings[idn]
+        print("delete", self.str)
 
     def NextFrame(self, event):
         try:
@@ -149,9 +152,6 @@ class ShowCapture(wx.Frame):
                     self.statusbar.SetStatusText('no face detected!')
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
-                self.i += 1
-                cv2.imwrite('./haha'+str(self.i)+'.jpg', frame)
-
                 self.bmp = wx.Bitmap.FromBuffer(self.width, self.height, frame)
                 self.ImgControl.SetBitmap(self.bmp)
 
