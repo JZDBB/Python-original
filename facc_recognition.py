@@ -66,12 +66,15 @@ class RootDialog(wx.Dialog):
         if readpassword == rootPassword:
             self.flag_ok = 1
             self.StatusText.SetLabel('Accomplished!')
+            data = open("./Users/Users.txt")
+            try:
+                data.write(UserDialog.Username + ':' + UserDialog.password + '\n')
+                data.close()
+            except:
+                print('write error')
         else:
             self.StatusText.SetLabel('Wrong password!')
         print('root')
-
-    def Isopened(self, event):
-        return self.flag_ok
 
 
 class UserDialog(wx.Dialog):
@@ -120,19 +123,11 @@ class UserDialog(wx.Dialog):
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
 
     def onClickResign(self, event):
-        Username = self.UserText.GetValue()
-        password = self.pwText.GetValue()+'\n'
+        self.Username = self.UserText.GetValue()
+        self.password = self.pwText.GetValue()+'\n'
         modal = RootDialog(self)
         modal.ShowModal()
-        flag = modal.Isopened()
         modal.Destroy()
-        if flag == 1:
-            data = open("./Users/Users.txt")
-            try:
-                data.write(Username + ':' + password)
-                data.close()
-            except:
-                print('write error')
         print('resign')
 
     def onClickOpen(self, event):
