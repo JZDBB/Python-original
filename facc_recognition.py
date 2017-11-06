@@ -26,19 +26,25 @@ import time
 # #get frame
 #     ret, frame = video_capture.read()
 
+
+
 class RootDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent)
         panel = wx.Panel(self, -1)
+
+        self.flag_ok = 0
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         RootStaticText = wx.StaticText(panel, -1, 'RootPassword:')
-        RootText = wx.TextCtrl(panel, value='', size=(230, 30))
+        self.RootText = wx.TextCtrl(panel, value='', size=(230, 30))
         openButton = wx.Button(panel, label='root', pos=(120, 100), size=(110, 30))
         sizer.Add(RootStaticText, 0)
-        sizer.Add(RootText, 0)
+        sizer.Add(self.RootText, 0)
 
         # sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(openButton, 0)
+
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
@@ -49,7 +55,20 @@ class RootDialog(wx.Dialog):
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
 
     def onClickOpen(self, event):
+        try:
+            rootPassword = open("./User/Root.txt").read()
+            print(rootPassword)
+        except IOError:
+            print('The datafile is missing!')
+        readpassword = self.RootText.GetValue()
+        if readpassword == rootPassword:
+            self.flag_ok = 1
+        else:
+            
         print('root')
+
+    def Isopened(self, event):
+        return self.flag_ok
 
 
 class UserDialog(wx.Dialog):
@@ -58,16 +77,32 @@ class UserDialog(wx.Dialog):
         panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+        self.users = []
+        self.passwords = []
+
+        try:
+            data = open("./Users/Users.txt")
+            for each_line in data:
+                try:
+                    (user, pw) = each_line.split(':', 1)
+                    self.users.append(user)
+                    self.passwords.append(pw)
+                except ValueError:
+                    pass
+            data.close()
+        except IOError:
+            print('The datafile is missing!')
+
         userStaticText = wx.StaticText(panel, -1, 'Username:')
-        UserText = wx.TextCtrl(panel, value='', size=(230, 30))
+        self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
-        pwText = wx.TextCtrl(panel, value='', size=(230, 30))
+        self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
         resignButton = wx.Button(panel, label='registered', pos=(0, 100), size=(110, 30))
         openButton = wx.Button(panel, label='sign in', pos=(120, 100), size=(110,30))
         sizer.Add(userStaticText, 0)
-        sizer.Add(UserText, 0)
+        sizer.Add(self.UserText, 0)
         sizer.Add(pwStaticText, 0)
-        sizer.Add(pwText, 0)
+        sizer.Add(self.pwText, 0)
 
         boxsizer = wx.BoxSizer(wx.HORIZONTAL)
         boxsizer.Add(resignButton,0)
@@ -82,17 +117,32 @@ class UserDialog(wx.Dialog):
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
 
     def onClickResign(self, event):
+        Username = self.UserText.GetValue()
+        password = self.pwText.GetValue()
         modal = RootDialog(self)
         modal.ShowModal()
+        flag = modal.Isopened()
         modal.Destroy()
+        if flag == 1:
+            data = open("./Users/Users.txt")
+            try:
+                data.write(Username + ':' + password)
+                data.close()
+            except:
+                print('write error')
         print('resign')
 
     def onClickOpen(self, event):
-        print('open')
-
-
-
-
+        Username = self.UserText.GetValue()
+        password = self.pwText.GetValue()+'\n'
+        try:
+            idn = self.users.index(Username)
+            if password == self.passwords[idn]:
+                print('opened')
+            else:
+                print('wrong password!')
+        except:
+            print('no this Users!')
 
 class ShowCapture(wx.Frame):
     def __init__(self, capture, fps=10):
