@@ -62,7 +62,7 @@ class RootDialog(wx.Dialog):
             print(rootPassword)
         except IOError:
             print('The datafile is missing!')
-        readpassword = self.RootText.GetValue()+ '\n'
+        readpassword = self.RootText.GetValue()
         if readpassword == rootPassword:
             self.flag_ok = 1
             self.StatusText.SetLabel('Accomplished!')
@@ -103,12 +103,14 @@ class UserDialog(wx.Dialog):
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
         self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
-        resignButton = wx.Button(panel, label='registered', pos=(0, 100), size=(110, 30))
-        openButton = wx.Button(panel, label='sign in', pos=(120, 100), size=(110,30))
+        resignButton = wx.Button(panel, label='registered', pos=(0, 115), size=(110, 30))
+        openButton = wx.Button(panel, label='sign in', pos=(120, 115), size=(110,30))
+        self.StatusText = wx.StaticText(panel, -1, '')
         sizer.Add(userStaticText, 0)
         sizer.Add(self.UserText, 0)
         sizer.Add(pwStaticText, 0)
         sizer.Add(self.pwText, 0)
+        sizer.Add(self.StatusText, 0)
 
         boxsizer = wx.BoxSizer(wx.HORIZONTAL)
         boxsizer.Add(resignButton,0)
@@ -117,43 +119,50 @@ class UserDialog(wx.Dialog):
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
         panel.SetSizer(sizer)
-        self.SetSize((230,135))
+        self.SetSize((230,150))
         self.Username = self.UserText.GetValue()
-        self.password = self.pwText.GetValue() + '\n'
+        self.password = self.pwText.GetValue()
 
         resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
 
     def onClickResign(self, event):
         self.Username = self.UserText.GetValue()
-        self.password = self.pwText.GetValue()+'\n'
-        modal = RootDialog(self)
-        modal.ShowModal()
-        flag = modal.flag_ok
-        modal.Destroy()
-        if flag:
-            data = open("./Users/Users.txt", 'a')
-            try:
-                str = self.Username + ':' + self.password + '\n'
-                data.write(str)
-                data.close()
-            except:
-                print('write error')
-        else:
-            print('root error')
+        self.password = self.pwText.GetValue()
+        for User_n in self.users:
+            if self.Username == User_n:
+                self.StatusText.SetLabel('User is existed!')
+            else:
+                modal = RootDialog(self)
+                modal.ShowModal()
+                flag = modal.flag_ok
+                modal.Destroy()
+                if flag:
+                    data = open("./Users/Users.txt", 'a')
+                    try:
+                        str = '\n' + self.Username + ':' + self.password
+                        data.write(str)
+                        data.close()
+                    except:
+                        print('write error')
+                    self.users.append(self.Username)
+                    self.passwords.append(self.password)
+                else:
+                    print('root error')
+
         print('resign')
 
     def onClickOpen(self, event):
         self.Username = self.UserText.GetValue()
-        self.password = self.pwText.GetValue()+'\n'
+        self.password = self.pwText.GetValue()
         try:
             idn = self.users.index(self.Username)
             if self.password == self.passwords[idn]:
-                print('opened')
+                self.StatusText.SetLabel('opened!')
             else:
-                print('wrong password!')
+                self.StatusText.SetLabel('Wrong password!')
         except:
-            print('User is not exist!')
+            self.StatusText.SetLabel('User is not exist!')
 
 class ShowCapture(wx.Frame):
     def __init__(self, capture, fps=10):
