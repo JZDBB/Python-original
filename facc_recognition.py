@@ -5,7 +5,8 @@ import traceback
 import cv2
 import wx
 import numpy as np
-
+from Crypto.Cipher import AES
+from binascii import b2a_hex, a2b_hex
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)
@@ -26,7 +27,32 @@ import numpy as np
 # #get frame
 #     ret, frame = video_capture.read()
 
+class prpcrypt():
+    def __init__(self, key):
+        self.key = key
+        self.mode = AES.MODE_CBC
 
+    # 加密函数，如果text不是16的倍数【加密文本text必须为16的倍数！】，那就补足为16的倍数
+    def encrypt(self, text):
+        cryptor = AES.new(self.key, self.mode, self.key)
+        # 这里密钥key 长度必须为16（AES-128）、24（AES-192）、或32（AES-256）Bytes 长度.目前AES-128足够用
+        length = 16
+        count = len(text)
+        add = length - (count % length)
+        text = text + (' ' * add)
+        self.ciphertext = cryptor.encrypt(text)
+        # 因为AES加密时候得到的字符串不一定是ascii字符集的，输出到终端或者保存时候可能存在问题
+        # 所以这里统一把加密后的字符串转化为16进制字符串
+        return b2a_hex(self.ciphertext)
+
+    # 解密后，去掉补足的空格用strip() 去掉
+    def decrypt(self, text):
+        cryptor = AES.new(self.key, self.mode, self.key)
+        plain_text = cryptor.decrypt(a2b_hex(text))
+        print(plain_text)
+        strip_text = plain_text.rstrip()
+        str_text = strip_text.decode()
+        return str_text
 
 class RootDialog(wx.Dialog):
     def __init__(self, parent):
@@ -34,6 +60,7 @@ class RootDialog(wx.Dialog):
         panel = wx.Panel(self, -1)
 
         self.flag_ok = 0
+        self.pc = prpcrypt('keys1234keys1234')
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         RootStaticText = wx.StaticText(panel, -1, 'RootPassword:')
@@ -58,7 +85,9 @@ class RootDialog(wx.Dialog):
 
     def onClickOpen(self, event):
         try:
-            rootPassword = open("./Users/Root.txt").read()
+            pw0 = open("./Users/Root.txt", 'r').read()
+            pw1 = pw0.encode(encoding='utf-8')
+            rootPassword = self.pc.decrypt(pw1)
             print(rootPassword)
         except IOError:
             print('The datafile is missing!')
@@ -85,12 +114,15 @@ class UserDialog(wx.Dialog):
 
         self.users = []
         self.passwords = []
+        self.pc = prpcrypt('keys1234keys1234')
 
         try:
-            data = open("./Users/Users.txt")
+            data = open("./Users/Users.txt", 'r')
             for each_line in data:
+                line = each_line.encode(encoding='utf-8')
+                decode_line = self.pc.decrypt(line)
                 try:
-                    (user, pw) = each_line.split(':', 1)
+                    (user, pw) = decode_line.split(':', 1)
                     self.users.append(user)
                     self.passwords.append(pw)
                 except ValueError:
@@ -140,8 +172,10 @@ class UserDialog(wx.Dialog):
                 if flag:
                     data = open("./Users/Users.txt", 'a')
                     try:
-                        str = '\n' + self.Username + ':' + self.password
-                        data.write(str)
+                        str = self.Username + ':' + self.password
+                        bit_data = self.pc.encrypt(str)
+                        write_data = '\n' + bit_data.decode()
+                        data.write(write_data)
                         data.close()
                     except:
                         print('write error')
