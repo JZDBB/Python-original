@@ -132,9 +132,10 @@ class UserDialog(wx.Dialog):
         flag = modal.flag_ok
         modal.Destroy()
         if flag:
-            data = open("./Users/Users.txt")
+            data = open("./Users/Users.txt", 'a')
             try:
-                data.write(self.Username + ':' + self.password + '\n')
+                str = self.Username + ':' + self.password + '\n'
+                data.write(str)
                 data.close()
             except:
                 print('write error')
@@ -152,7 +153,7 @@ class UserDialog(wx.Dialog):
             else:
                 print('wrong password!')
         except:
-            print('no this Users!')
+            print('User is not exist!')
 
 class ShowCapture(wx.Frame):
     def __init__(self, capture, fps=10):
