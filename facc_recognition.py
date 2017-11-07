@@ -27,6 +27,7 @@ from binascii import b2a_hex, a2b_hex
 # #get frame
 #     ret, frame = video_capture.read()
 
+
 class prpcrypt():
     def __init__(self, key):
         self.key = key
@@ -95,12 +96,8 @@ class RootDialog(wx.Dialog):
         if readpassword == rootPassword:
             self.flag_ok = 1
             self.StatusText.SetLabel('Accomplished!')
-            # data = open("./Users/Users.txt")
-            # try:
-            #     data.write(UserDialog.Username + ':' + UserDialog.password + '\n')
-            #     data.close()
-            # except:
-            #     print('write error')
+            # RootDialog.Disable()
+
         else:
             self.StatusText.SetLabel('Wrong password!')
         print('root')
@@ -119,17 +116,19 @@ class UserDialog(wx.Dialog):
         try:
             data = open("./Users/Users.txt", 'r')
             for each_line in data:
-                line = each_line.encode(encoding='utf-8')
-                decode_line = self.pc.decrypt(line)
+                Line = each_line.replace('\n','')
+                line = Line.encode(encoding='utf-8')
                 try:
+                    decode_line = self.pc.decrypt(line)
                     (user, pw) = decode_line.split(':', 1)
                     self.users.append(user)
                     self.passwords.append(pw)
+                    print(user+pw)
                 except ValueError:
                     pass
             data.close()
         except IOError:
-            print('The datafile is missing!')
+            print('decode error!')
 
         userStaticText = wx.StaticText(panel, -1, 'Username:')
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
@@ -161,28 +160,29 @@ class UserDialog(wx.Dialog):
     def onClickResign(self, event):
         self.Username = self.UserText.GetValue()
         self.password = self.pwText.GetValue()
-        for User_n in self.users:
-            if self.Username == User_n:
-                self.StatusText.SetLabel('User is existed!')
-            else:
-                modal = RootDialog(self)
-                modal.ShowModal()
-                flag = modal.flag_ok
-                modal.Destroy()
-                if flag:
-                    data = open("./Users/Users.txt", 'a')
-                    try:
-                        str = self.Username + ':' + self.password
-                        bit_data = self.pc.encrypt(str)
-                        write_data = '\n' + bit_data.decode()
-                        data.write(write_data)
-                        data.close()
-                    except:
-                        print('write error')
-                    self.users.append(self.Username)
-                    self.passwords.append(self.password)
-                else:
-                    print('root error')
+        modal = RootDialog(self)
+        modal.ShowModal()
+        flag = modal.flag_ok
+        modal.Destroy()
+        if flag:
+            # for User_n in self.users:
+            #     if self.Username == User_n:
+            #         self.StatusText.SetLabel('User is existed!')
+            #         pass
+
+            data = open("./Users/Users.txt", 'a')
+            try:
+                str = self.Username + ':' + self.password
+                bit_data = self.pc.encrypt(str)
+                write_data = '\n' + bit_data.decode()
+                data.write(write_data)
+                data.close()
+            except:
+                print('write error')
+            self.users.append(self.Username)
+            self.passwords.append(self.password)
+        else:
+            print('root error')
 
         print('resign')
 
