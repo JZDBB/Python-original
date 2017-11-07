@@ -1,4 +1,182 @@
+import wx
+import cv2
+import numpy as np
+import time
 
+#初版
+# app = wx.App()
+# frame = wx.Frame(None, -1, 'simple.py')
+# frame.Show()
+# app.MainLoop()
+
+#显示鼠标位置
+# class MyFrame(wx.Frame):
+#     def __init__(self):
+#         wx.Frame.__init__(self, None, -1, "My Frame", size = (300, 300))
+#         panel = wx.Panel(self, -1)
+#         panel.Bind(wx.EVT_MOTION, self.OnMove)
+#         wx.StaticText(panel, -1, "Pos:", pos = (10, 12))
+#         self.posCtrl = wx.TextCtrl(panel, -1, "", pos = (40, 10))
+#
+#     def OnMove(self, event):
+#         pos = event.GetPosition()
+#         self.posCtrl.SetValue("%s, %s" %(pos.x, pos.y))
+# if __name__ == '__main__':
+#     app = wx.PySimpleApp()
+#     frame = MyFrame()
+#     frame.Show(True)
+#     app.MainLoop()
+
+
+
+# class Example(wx.Frame):
+#     def __init__(self, parent, title):
+#         super(Example, self).__init__(parent, title=title,
+#                                       size=(1000,600))
+#         self.Center()
+#         self.Show()
+#
+# if __name__ == '__main__':
+#     app = wx.App()
+#     Example(None, title='size')
+#     app.MainLoop()
+
+
+
+# !/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# class MyPanel(wx.Panel):
+#     def __init__(self, *args, **kw):
+#         super(MyPanel, self).__init__(*args, **kw)
+#
+#         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
+#
+#     def OnButtonClicked(self, e):
+#         print('event reached panel class')
+#         e.Skip()
+#
+#
+# class MyButton(wx.Button):
+#     def __init__(self, *args, **kw):
+#         super(MyButton, self).__init__(*args, **kw)
+#
+#         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
+#
+#     def OnButtonClicked(self, e):
+#         print('event reached button class')
+#         e.Skip()
+#
+#
+# class Example(wx.Frame):
+#     def __init__(self, *args, **kw):
+#         super(Example, self).__init__(*args, **kw)
+#
+#         self.InitUI()
+#
+#     def InitUI(self):
+#         mpnl = MyPanel(self)
+#
+#         MyButton(mpnl, label='Ok', pos=(15, 15))
+#
+#         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
+#
+#         self.SetTitle('Propagate event')
+#         self.Centre()
+#         self.Show(True)
+#
+#     def OnButtonClicked(self, e):
+#         print('event reached frame class')
+#         e.Skip()
+#
+#
+# def main():
+#     ex = wx.App()
+#     Example(None)
+#     ex.MainLoop()
+#
+#
+# if __name__ == '__main__':
+#     main()
+
+
+
+# class Example(wx.Frame):
+#     def __init__(self, *args, **kwargs):
+#         super(Example, self).__init__(*args, **kwargs)
+#
+#         self.InitUI()
+#
+#     def InitUI(self):
+#         wx.FutureCall(5000, self.ShowMessage)
+#
+#         self.SetSize((300, 200))
+#         self.SetTitle('Message box')
+#         self.Centre()
+#         self.Show(True)
+#
+#     def ShowMessage(self):
+#         wx.MessageBox('Download completed', 'Info',
+#                       wx.OK | wx.ICON_INFORMATION)
+#
+#
+# def main():
+#     ex = wx.App()
+#     Example(None)
+#     ex.MainLoop()
+#
+#
+# if __name__ == '__main__':
+#     main()
+
+
+
+# Start with a numpy array style image I'll call "source"
+
+# convert the colorspace to RGB from cv2 standard BGR, ensure input is uint8
+
+
+# class Frame(wx.Frame):
+#     def __init__(self, *args, **kw):
+#         super(Frame, self).__init__(*args, **kw)
+#         self.timer = wx.Timer(self)
+#         self.Bind(wx.EVT_TIMER, self.update, self.timer)
+#         self.cap = cv2.VideoCapture(0)
+#         ret, source = self.cap.read()
+#         img = cv2.cvtColor(np.uint8(source), cv2.COLOR_BGR2RGB)
+#         self.h, self.w = img.shape[0:2]
+#         # wxbmp = wx.BitmapFromBuffer(self.w, self.h, img)
+#         # wx.image = wx.StaticBitmap(parent=self, bitmap=wxbmp)
+#         self.timer.Start(50)
+#         self.SetSize((750,500))
+#         self.Center()
+#         self.Show(True)
+#
+#     def update(self,event):
+#         ret, source = self.cap.read()
+#         img = cv2.cvtColor(np.uint8(source), cv2.COLOR_BGR2RGB)
+#         wxbmp = wx.BitmapFromBuffer(self.w, self.h, img)
+#         wx.StaticBitmap(parent=self, bitmap=wxbmp)
+#
+#
+# def main():
+#     app = wx.App()
+#     Frame(None)
+#     app.MainLoop()
+#
+#
+# if __name__ == "__main__":
+#     main()
+
+
+
+
+import wx
+from wx.lib import statbmp
+import cv2
+import numpy as np
+import os
+import traceback
 import wx
 from wx.lib import statbmp
 import cv2
@@ -54,7 +232,7 @@ class ChooseSaveDialog(wx.Dialog):
 
 
 class ShowCapture(wx.Frame):
-    def __init__(self, capture, fps=15):
+    def __init__(self, capture, fps=10):
         wx.Frame.__init__(self, None)
         panel = wx.Panel(self, -1)
 

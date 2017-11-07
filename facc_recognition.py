@@ -5,7 +5,7 @@ import traceback
 import cv2
 import wx
 import numpy as np
-import time
+
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)
