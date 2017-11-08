@@ -197,6 +197,42 @@ class UserDialog(wx.Dialog):
         except:
             self.StatusText.SetLabel('User is not exist!')
 
+class OkDialog(wx.Dialog):
+    def __init__(self):
+        wx.Dialog.__init__(self, None, -1, 'Open Dialog', size=(300, 100))
+        static = wx.StaticText(self, -1, label='Hello World!', pos=(10, 10))
+        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 30))
+        okButton.SetDefault()
+
+class WarnDialog(wx.Dialog):
+    def __init__(self):
+        wx.Dialog.__init__(self, None, -1, 'Warning', size=(300, 100))
+        static1 = wx.StaticText(self, -1, label='Can not open the door!', pos=(10, 10))
+        static2 = wx.StaticText(self, -1, label='Please use password to enter!', pos=(10, 20))
+        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 40))
+        okButton.SetDefault()
+
+        okButton.Bind(wx.EVT_BUTTON, self.OnClickPass)
+    def OnClickPass(self, event):
+        modal = UserDialog()
+        modal.ShowModal()
+        modal.Destroy()
+
+# class OpenDialog(wx.Dialog):
+#     def __init__(self, parent):
+#         wx.Dialog.__init__(self, parent)
+#         panel = wx.Panel(self, -1)
+#         sizer = wx.BoxSizer(wx.VERTICAL)
+#
+#         self.str = ShowCapture.prediction #what happen?
+#         StateT = wx.StaticText(panel, -1, label=self.str)
+#         sizer.Add(StateT, 0)
+#
+#         panel.SetSizer(sizer)
+#         sizer.SetSizeHints(self)
+#         panel.Layout()
+#         panel.SetFocus()
+#
 
 class ShowCapture(wx.Frame):
     def __init__(self, capture, fps=10):
@@ -206,6 +242,7 @@ class ShowCapture(wx.Frame):
         # create a grid sizer with 5 pix between each cell
         sizer = wx.GridBagSizer(5, 5)
         self.flag = 0
+        self.count = 0
 
         self.capture = capture
         ret, frame = self.capture.read()
@@ -235,15 +272,16 @@ class ShowCapture(wx.Frame):
         # create image display widgets
         self.ImgControl = statbmp.GenStaticBitmap(panel, wx.ID_ANY, self.bmp)
 
-        collectButton = wx.Button(panel, label='collect', pos=(20, 20), size=(125,40))
-        recognitionButton = wx.Button(panel, label='open', pos=(100, 80), size=(125,40))
-        deleteButton = wx.Button(panel, label='delete', pos=(100, 140), size=(125,40))
-
-        self.nameTest = wx.TextCtrl(panel, value='',pos=(100,200), size=(270,40))#, validator=wx.TE_CENTER)
+        collectButton = wx.Button(panel, label='collect', pos=(20, 20), size=(100,40))
+        recognitionButton = wx.Button(panel, label='open', pos=(100, 80), size=(100,40))
+        deleteButton = wx.Button(panel, label='delete', pos=(100, 140), size=(100,40))
+        AddButton = wx.Button(panel, label='add user', pos=(100,140), size=(100,40))
+        self.nameTest = wx.TextCtrl(panel, value='',pos=(100,200), size=(245,40))#, validator=wx.TE_CENTER)
 
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
         box_sizer.Add(collectButton, 0)
         box_sizer.Add(recognitionButton, 0)
+        box_sizer.Add(AddButton, 0)
         box_sizer.Add(deleteButton, 0)
         box_sizer.Add(self.nameTest,0)
         sizer.Add(box_sizer, (0, 0), wx.DefaultSpan, wx.ALIGN_RIGHT)
@@ -268,6 +306,7 @@ class ShowCapture(wx.Frame):
         collectButton.Bind(wx.EVT_BUTTON, self.onClickCollect)
         recognitionButton.Bind(wx.EVT_BUTTON, self.onClickRecognite)
         deleteButton.Bind(wx.EVT_BUTTON, self.onClickDelete)
+        AddButton.Bind(wx.EVT_BUTTON, self.onClickAdd)
 
     def onClickCollect(self, event):
         self.str = self.nameTest.GetValue()
@@ -278,13 +317,31 @@ class ShowCapture(wx.Frame):
         print("collect", self.str)
 
     def onClickRecognite(self, event):
-
-        modal = UserDialog(self)
         self.timer.Stop()
-        modal.ShowModal()
-        modal.Destroy()
+        self.faceRecognite()
+        if self.count == 0:
+            modal = OkDialog()
+            result = modal.ShowModal()
+            if result == wx.ID_OK:
+                print('OK')
+            else:
+                pass
+            modal.Destroy()
+        elif self.count >2:
+            modal = UserDialog(self)
+            modal.ShowModal()
+            modal.Destroy()
+            self.timer.Start(1000. / self.fps)
+            self.count += 1
+        else:
+            pass
         self.timer.Start(1000. / self.fps)
         print("recognite")
+
+    def onClickAdd(self, event):
+        modal = RootDialog()
+        result = modal.ShowModal()
+        modal.Destroy()
 
     def onClickDelete(self, event):
         self.str = self.nameTest.GetValue()
@@ -298,14 +355,16 @@ class ShowCapture(wx.Frame):
         try:
             ret, self.orig_frame = self.capture.read()
             if ret:
-                small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
-                face_location = face_recognition.face_locations(small_frame)
+                self.small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
+                self.face_location = face_recognition.face_locations(self.small_frame)
 
-                if len(face_location) > 1:
+                if len(self.face_location) > 1:
+                    self.flag = 0
                     self.statusbar.SetStatusText('please ensure there is only one person in the picture!')
-                elif len(face_location) == 1:
+                elif len(self.face_location) == 1:
                     # self.frame = self.orig_frame
                     # if self.flag == 0:
+                    self.flag = 1
                     self.statusbar.SetStatusText('click the opening button to open the door.')
                         # if len(self.known_encodings)!=0:
                         #     face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
@@ -331,6 +390,7 @@ class ShowCapture(wx.Frame):
                     #     self.names.append(os.path.splitext(self.str)[0])
                     #     self.flag = 0
                 else:
+                    self.flag = 0
                     self.statusbar.SetStatusText('no face detected!')
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
@@ -343,9 +403,20 @@ class ShowCapture(wx.Frame):
             traceback.print_exc()
             print("error")
 
-    # def faceRecognite(self):
-
-
+    def faceRecognite(self):
+        if len(self.known_encodings)!=0:
+            face_encoding = face_recognition.face_encodings(self.small_frame, self.face_location)[0]
+            distance = face_recognition.face_distance(self.known_encodings, face_encoding)
+            idx = np.argmin(distance)
+            if distance[idx] < 0.6:
+                self.prediction = self.names[idx]+ ' opened'
+                self.count = 0
+            else:
+                pass
+        else:
+            self.prediction = 'Unknown locked'
+            self.count += 1
+        self.statusbar.SetStatusText(self.prediction)
 
 
 capture = cv2.VideoCapture(0)
