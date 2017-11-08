@@ -7,6 +7,7 @@ import wx
 import numpy as np
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
+import Users
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)
@@ -64,10 +65,18 @@ class RootDialog(wx.Dialog):
         self.pc = prpcrypt('keys1234keys1234')
 
         sizer = wx.BoxSizer(wx.VERTICAL)
+        userStaticText0 = wx.StaticText(panel, -1, 'Username:')
+        self.UserText0 = wx.TextCtrl(panel, value='', size=(230, 30))
+        pwStaticText0 = wx.StaticText(panel, -1, 'Password:')
+        self.pwText0 = wx.TextCtrl(panel, value='', size=(230, 30))
         RootStaticText = wx.StaticText(panel, -1, 'RootPassword:')
         self.RootText = wx.TextCtrl(panel, value='', size=(230, 30))
         openButton = wx.Button(panel, label='root', pos=(120, 100), size=(110, 30))
         self.StatusText = wx.StaticText(panel, -1, 'Administrator login')
+        sizer.Add(userStaticText0, 0)
+        sizer.Add(self.UserText0, 0)
+        sizer.Add(pwStaticText0, 0)
+        sizer.Add(self.pwText0, 0)
         sizer.Add(RootStaticText, 0)
         sizer.Add(self.RootText, 0)
 
@@ -96,7 +105,19 @@ class RootDialog(wx.Dialog):
         if readpassword == rootPassword:
             self.flag_ok = 1
             self.StatusText.SetLabel('Accomplished!')
-            # RootDialog.Disable()
+            self.Username0 = self.UserText0.GetValue()
+            self.password0 = self.pwText0.GetValue()
+            data = open("./Users/Users.txt", 'a')
+            try:
+                str = self.Username0 + ':' + self.password0
+                bit_data = self.pc.encrypt(str)
+                write_data = '\n' + bit_data.decode()
+                data.write(write_data)
+                data.close()
+            except:
+                print('write error')
+            Users.users.append(self.Username0)
+            Users.passwords.append(self.password0)
 
         else:
             self.StatusText.SetLabel('Wrong password!')
@@ -104,31 +125,31 @@ class RootDialog(wx.Dialog):
 
 class UserDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title='Sign in')
+        wx.Dialog.__init__(self, parent)
         panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.users = []
-        self.passwords = []
-        self.pc = prpcrypt('keys1234keys1234')
-
-        try:
-            data = open("./Users/Users.txt", 'r')
-            for each_line in data:
-                Line = each_line.replace('\n','')
-                line = Line.encode(encoding='utf-8')
-                try:
-                    decode_line = self.pc.decrypt(line)
-                    (user, pw) = decode_line.split(':', 1)
-                    self.users.append(user)
-                    self.passwords.append(pw)
-                    print(user+pw)
-                except ValueError:
-                    pass
-            data.close()
-        except IOError:
-            print('decode error!')
-
+        # self.users = []
+        # self.passwords = []
+        # self.pc = prpcrypt('keys1234keys1234')
+        #
+        # try:
+        #     data = open("./Users/Users.txt", 'r')
+        #     for each_line in data:
+        #         Line = each_line.replace('\n','')
+        #         line = Line.encode(encoding='utf-8')
+        #         try:
+        #             decode_line = self.pc.decrypt(line)
+        #             (user, pw) = decode_line.split(':', 1)
+        #             self.users.append(user)
+        #             self.passwords.append(pw)
+        #             print(user+pw)
+        #         except ValueError:
+        #             pass
+        #     data.close()
+        # except IOError:
+        #     print('decode error!')
+        #
         userStaticText = wx.StaticText(panel, -1, 'Username:')
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
@@ -188,8 +209,8 @@ class UserDialog(wx.Dialog):
         self.Username = self.UserText.GetValue()
         self.password = self.pwText.GetValue()
         try:
-            idn = self.users.index(self.Username)
-            if self.password == self.passwords[idn]:
+            idn = Users.users.index(self.Username)
+            if self.password == Users.passwords[idn]:
                 str = 'opened! Wellcome '+ self.Username
                 self.StatusText.SetLabel(str)
             else:
@@ -327,33 +348,39 @@ class ShowCapture(wx.Frame):
         print("collect", self.str)
 
     def onClickRecognite(self, event):
-        self.timer.Stop()
-        self.faceRecognite()
-        if self.count == 0:
-            modal = OkDialog()
-            result = modal.ShowModal()
-            if result == wx.ID_OK:
-                print('OK')
+        if self.flag == 1:
+            self.timer.Stop()
+            self.faceRecognite()
+            if self.count == 0:
+                modal = OkDialog()
+                result = modal.ShowModal()
+                if result == wx.ID_OK:
+                    print('OK')
+                else:
+                    pass
+                modal.Destroy()
+            elif self.count >2:
+                modal = WarnDialog()
+                modal.ShowModal()
+                modal.Destroy()
+                # self.timer.Start(1000. / self.fps)
             else:
-                pass
-            modal.Destroy()
-        elif self.count >2:
-            modal = WarnDialog()
-            modal.ShowModal()
-            modal.Destroy()
-            # self.timer.Start(1000. / self.fps)
+                modal = TryDialog()
+                result = modal.ShowModal()
+                if result == wx.ID_OK:
+                    print('try again')
+            self.timer.Start(1000. / self.fps)
         else:
-            modal = TryDialog()
-            result = modal.ShowModal()
-            if result == wx.ID_OK:
-                print('try again')
-        self.timer.Start(1000. / self.fps)
+            pass
         print("recognite")
 
     def onClickAdd(self, event):
-        modal = RootDialog()
-        result = modal.ShowModal()
+        self.timer.Stop()
+        modal = RootDialog(self)
+        modal.ShowModal()
         modal.Destroy()
+        self.timer.Start(1000. / self.fps)
+        print('add')
 
     def onClickDelete(self, event):
         self.str = self.nameTest.GetValue()
@@ -377,7 +404,7 @@ class ShowCapture(wx.Frame):
                     # self.frame = self.orig_frame
                     # if self.flag == 0:
                     self.flag = 1
-                    self.statusbar.SetStatusText('click the opening button to open the door.')
+                    self.statusbar.SetStatusText('click the Openbutton to open the door.')
                         # if len(self.known_encodings)!=0:
                         #     face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
                         #     distance = face_recognition.face_distance(self.known_encodings, face_encoding)
