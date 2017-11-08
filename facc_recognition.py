@@ -9,6 +9,12 @@ from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 import Users
 
+#1.图像显示帧率不足，时不时有卡顿
+#2.Root密码登录未完成，全局的用户密码登录有问题
+#3.在删除图片后以及相应的face_encoding后仍然可以识别该人（bug）
+#4.Dialog不稳定，有时容易和视频一起卡顿
+
+
 # #open camera
 # video_capture = cv2.VideoCapture(0)
 #
