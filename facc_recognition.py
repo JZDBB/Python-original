@@ -104,7 +104,7 @@ class RootDialog(wx.Dialog):
 
 class UserDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent)
+        wx.Dialog.__init__(self, parent, title='Sign in')
         panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -133,7 +133,7 @@ class UserDialog(wx.Dialog):
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
         self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
-        resignButton = wx.Button(panel, label='registered', pos=(0, 115), size=(110, 30))
+        # resignButton = wx.Button(panel, label='registered', pos=(0, 115), size=(110, 30))
         openButton = wx.Button(panel, label='sign in', pos=(120, 115), size=(110,30))
         self.StatusText = wx.StaticText(panel, -1, '')
         sizer.Add(userStaticText, 0)
@@ -143,7 +143,7 @@ class UserDialog(wx.Dialog):
         sizer.Add(self.StatusText, 0)
 
         boxsizer = wx.BoxSizer(wx.HORIZONTAL)
-        boxsizer.Add(resignButton,0)
+        # boxsizer.Add(resignButton,0)
         boxsizer.Add(openButton, 0)
         panel.SetSizer(boxsizer)
         # sizer.Add(resignButton, 0)
@@ -153,37 +153,36 @@ class UserDialog(wx.Dialog):
         self.Username = self.UserText.GetValue()
         self.password = self.pwText.GetValue()
 
-        resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
+        # resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
-
-    def onClickResign(self, event):
-        self.Username = self.UserText.GetValue()
-        self.password = self.pwText.GetValue()
-        modal = RootDialog(self)
-        modal.ShowModal()
-        flag = modal.flag_ok
-        modal.Destroy()
-        if flag:
-            # for User_n in self.users:
-            #     if self.Username == User_n:
-            #         self.StatusText.SetLabel('User is existed!')
-            #         pass
-
-            data = open("./Users/Users.txt", 'a')
-            try:
-                str = self.Username + ':' + self.password
-                bit_data = self.pc.encrypt(str)
-                write_data = '\n' + bit_data.decode()
-                data.write(write_data)
-                data.close()
-            except:
-                print('write error')
-            self.users.append(self.Username)
-            self.passwords.append(self.password)
-        else:
-            print('root error')
-
-        print('resign')
+    # def onClickResign(self, event):
+    #     self.Username = self.UserText.GetValue()
+    #     self.password = self.pwText.GetValue()
+    #     modal = RootDialog(self)
+    #     modal.ShowModal()
+    #     flag = modal.flag_ok
+    #     modal.Destroy()
+    #     if flag:
+    #         # for User_n in self.users:
+    #         #     if self.Username == User_n:
+    #         #         self.StatusText.SetLabel('User is existed!')
+    #         #         pass
+    #
+    #         data = open("./Users/Users.txt", 'a')
+    #         try:
+    #             str = self.Username + ':' + self.password
+    #             bit_data = self.pc.encrypt(str)
+    #             write_data = '\n' + bit_data.decode()
+    #             data.write(write_data)
+    #             data.close()
+    #         except:
+    #             print('write error')
+    #         self.users.append(self.Username)
+    #         self.passwords.append(self.password)
+    #     else:
+    #         print('root error')
+    #
+    #     print('resign')
 
     def onClickOpen(self, event):
         self.Username = self.UserText.GetValue()
@@ -191,7 +190,8 @@ class UserDialog(wx.Dialog):
         try:
             idn = self.users.index(self.Username)
             if self.password == self.passwords[idn]:
-                self.StatusText.SetLabel('opened!')
+                str = 'opened! Wellcome '+ self.Username
+                self.StatusText.SetLabel(str)
             else:
                 self.StatusText.SetLabel('Wrong password!')
         except:
@@ -206,17 +206,27 @@ class OkDialog(wx.Dialog):
 
 class WarnDialog(wx.Dialog):
     def __init__(self):
-        wx.Dialog.__init__(self, None, -1, 'Warning', size=(300, 100))
-        static1 = wx.StaticText(self, -1, label='Can not open the door!', pos=(10, 10))
-        static2 = wx.StaticText(self, -1, label='Please use password to enter!', pos=(10, 20))
-        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 40))
+        wx.Dialog.__init__(self, None, -1, 'Warning', size=(300, 90))
+        static1 = wx.StaticText(self, -1, label='Can not open the door!', pos=(15, 10))
+        static2 = wx.StaticText(self, -1, label='Please use password to enter!', pos=(15, 30))
+        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 50))
         okButton.SetDefault()
+        # quitButton = wx.Button(self, wx.ID_CANCEL, pos = (150, 50))
 
         okButton.Bind(wx.EVT_BUTTON, self.OnClickPass)
     def OnClickPass(self, event):
-        modal = UserDialog()
+        modal = UserDialog(self)
         modal.ShowModal()
         modal.Destroy()
+
+class TryDialog(wx.Dialog):
+    def __init__(self):
+        wx.Dialog.__init__(self, None, -1, 'Warning', size=(300, 90))
+        staticText1 = wx.StaticText(self, -1, label='Can not recognize your face!', pos=(15, 10))
+        staticText2 = wx.StaticText(self, -1, label='Please try again!', pos=(15, 30))
+        okButton = wx.Button(self, wx.ID_OK, 'OK', pos=(110, 50))
+        okButton.SetDefault()
+
 
 # class OpenDialog(wx.Dialog):
 #     def __init__(self, parent):
@@ -328,13 +338,15 @@ class ShowCapture(wx.Frame):
                 pass
             modal.Destroy()
         elif self.count >2:
-            modal = UserDialog(self)
+            modal = WarnDialog()
             modal.ShowModal()
             modal.Destroy()
-            self.timer.Start(1000. / self.fps)
-            self.count += 1
+            # self.timer.Start(1000. / self.fps)
         else:
-            pass
+            modal = TryDialog()
+            result = modal.ShowModal()
+            if result == wx.ID_OK:
+                print('try again')
         self.timer.Start(1000. / self.fps)
         print("recognite")
 
