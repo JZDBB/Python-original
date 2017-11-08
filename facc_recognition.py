@@ -271,7 +271,10 @@ class ShowCapture(wx.Frame):
 
     def onClickCollect(self, event):
         self.str = self.nameTest.GetValue()
-        self.flag = 1
+        cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
+        face_encoding = face_recognition.face_encodings(self.orig_frame)[0]
+        self.known_encodings.append(face_encoding)
+        self.names.append(os.path.splitext(self.str)[0])
         print("collect", self.str)
 
     def onClickRecognite(self, event):
@@ -295,40 +298,40 @@ class ShowCapture(wx.Frame):
         try:
             ret, self.orig_frame = self.capture.read()
             if ret:
-                # small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
-                # face_location = face_recognition.face_locations(small_frame)
-                #
-                # if len(face_location) > 1:
-                #     self.statusbar.SetStatusText('please ensure there is only one person in the picture!')
-                # elif len(face_location) == 1:
-                #     self.frame = self.orig_frame
-                #     if self.flag == 0:
-                #         pass
-                #         # if len(self.known_encodings)!=0:
-                #         #     face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
-                #         #     distance = face_recognition.face_distance(self.known_encodings, face_encoding)
-                #         #     idx = np.argmin(distance)
-                #         #     if distance[idx] < 0.6:
-                #         #         prediction = self.names[idx]+ ' opened'
-                #         #     else:
-                #         #         prediction = 'Unknown locked'
-                #         #
-                #         #     for (top, right, bottom, left) in face_location:
-                #         #         top *= 4
-                #         #         right *= 4
-                #         #         bottom *= 4
-                #         #         left *= 4
-                #         #
-                #         #         cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
-                #         #     self.statusbar.SetStatusText(prediction)
-                #     else:
-                #         cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
-                #         face_encoding = face_recognition.face_encodings(self.orig_frame)[0]
-                #         self.known_encodings.append(face_encoding)
-                #         self.names.append(os.path.splitext(self.str)[0])
-                #         self.flag = 0
-                # else:
-                #     self.statusbar.SetStatusText('no face detected!')
+                small_frame = cv2.resize(self.orig_frame, (0, 0), fx=0.25, fy=0.25)
+                face_location = face_recognition.face_locations(small_frame)
+
+                if len(face_location) > 1:
+                    self.statusbar.SetStatusText('please ensure there is only one person in the picture!')
+                elif len(face_location) == 1:
+                    # self.frame = self.orig_frame
+                    # if self.flag == 0:
+                    self.statusbar.SetStatusText('click the opening button to open the door.')
+                        # if len(self.known_encodings)!=0:
+                        #     face_encoding = face_recognition.face_encodings(small_frame, face_location)[0]
+                        #     distance = face_recognition.face_distance(self.known_encodings, face_encoding)
+                        #     idx = np.argmin(distance)
+                        #     if distance[idx] < 0.6:
+                        #         prediction = self.names[idx]+ ' opened'
+                        #     else:
+                        #         prediction = 'Unknown locked'
+                        #
+                        #     for (top, right, bottom, left) in face_location:
+                        #         top *= 4
+                        #         right *= 4
+                        #         bottom *= 4
+                        #         left *= 4
+                        #
+                        #         cv2.rectangle(self.orig_frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                        #     self.statusbar.SetStatusText(prediction)
+                    # else:
+                    #     cv2.imwrite('./known/' + self.str + '.jpg', self.orig_frame)
+                    #     face_encoding = face_recognition.face_encodings(self.orig_frame)[0]
+                    #     self.known_encodings.append(face_encoding)
+                    #     self.names.append(os.path.splitext(self.str)[0])
+                    #     self.flag = 0
+                else:
+                    self.statusbar.SetStatusText('no face detected!')
 
                 frame = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2RGB)
                 self.bmp = wx.Bitmap.FromBuffer(self.width, self.height, frame)
@@ -339,6 +342,10 @@ class ShowCapture(wx.Frame):
         except:
             traceback.print_exc()
             print("error")
+
+    # def faceRecognite(self):
+
+
 
 
 capture = cv2.VideoCapture(0)
