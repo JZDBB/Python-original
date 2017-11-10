@@ -13,7 +13,7 @@ import wx
 import numpy as np
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
-import Users
+# import Users
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)

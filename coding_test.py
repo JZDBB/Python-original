@@ -30,8 +30,8 @@ class prpcrypt():
 
 
 pc = prpcrypt('keys1234keys1234')
-data = open('./Users/Users.txt', 'wb')
-message = 'XYN:123456'
+data = open('./Users/Root.txt', 'wb')
+message = '123456'
 ciphertext = pc.encrypt(message)
 
 print(ciphertext)
@@ -42,7 +42,7 @@ print(message1)
 
 
 
-            # from Crypto.Cipher import AES
+# from Crypto.Cipher import AES
 # from Crypto import Random
 # import binascii
 #
