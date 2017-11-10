@@ -1,3 +1,9 @@
+#1.图像显示帧率不足，时不时有卡顿
+#2.Root密码登录未完成，全局的用户密码登录有问题（完成）
+#3.在删除图片后以及相应的face_encoding后仍然可以识别该人（bug 解决）
+#4.Dialog不稳定，有时容易和视频一起卡顿
+#5.在open的时候Users有问题时，退不出登录界面
+
 import face_recognition
 from wx.lib import statbmp
 import os
@@ -8,12 +14,6 @@ import numpy as np
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 import Users
-
-#1.图像显示帧率不足，时不时有卡顿
-#2.Root密码登录未完成，全局的用户密码登录有问题
-#3.在删除图片后以及相应的face_encoding后仍然可以识别该人（bug）
-#4.Dialog不稳定，有时容易和视频一起卡顿
-
 
 # #open camera
 # video_capture = cv2.VideoCapture(0)
@@ -122,9 +122,8 @@ class RootDialog(wx.Dialog):
                 data.close()
             except:
                 print('write error')
-            Users.users.append(self.Username0)
-            Users.passwords.append(self.password0)
-
+            # Users.users.append(self.Username0)
+            # Users.passwords.append(self.password0)
         else:
             self.StatusText.SetLabel('Wrong password!')
         print('root')
@@ -135,33 +134,33 @@ class UserDialog(wx.Dialog):
         panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # self.users = []
-        # self.passwords = []
-        # self.pc = prpcrypt('keys1234keys1234')
-        #
-        # try:
-        #     data = open("./Users/Users.txt", 'r')
-        #     for each_line in data:
-        #         Line = each_line.replace('\n','')
-        #         line = Line.encode(encoding='utf-8')
-        #         try:
-        #             decode_line = self.pc.decrypt(line)
-        #             (user, pw) = decode_line.split(':', 1)
-        #             self.users.append(user)
-        #             self.passwords.append(pw)
-        #             print(user+pw)
-        #         except ValueError:
-        #             pass
-        #     data.close()
-        # except IOError:
-        #     print('decode error!')
-        #
+        self.users = []
+        self.passwords = []
+        self.pc = prpcrypt('keys1234keys1234')
+
+        try:
+            data = open("./Users/Users.txt", 'r')
+            for each_line in data:
+                Line = each_line.replace('\n','')
+                line = Line.encode(encoding='utf-8')
+                try:
+                    decode_line = self.pc.decrypt(line)
+                    (user, pw) = decode_line.split(':', 1)
+                    self.users.append(user)
+                    self.passwords.append(pw)
+                    print(user+pw)
+                except ValueError:
+                    pass
+            data.close()
+        except IOError:
+            print('decode error!')
+
         userStaticText = wx.StaticText(panel, -1, 'Username:')
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
         self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
-        # resignButton = wx.Button(panel, label='registered', pos=(0, 115), size=(110, 30))
-        openButton = wx.Button(panel, label='sign in', pos=(120, 115), size=(110,30))
+        resignButton = wx.Button(panel, wx.ID_CANCEL, label='registered', pos=(110, 115), size=(110, 30))
+        openButton = wx.Button(panel, label='sign in', pos=(0, 115), size=(110,30))
         self.StatusText = wx.StaticText(panel, -1, '')
         sizer.Add(userStaticText, 0)
         sizer.Add(self.UserText, 0)
@@ -170,8 +169,8 @@ class UserDialog(wx.Dialog):
         sizer.Add(self.StatusText, 0)
 
         boxsizer = wx.BoxSizer(wx.HORIZONTAL)
-        # boxsizer.Add(resignButton,0)
         boxsizer.Add(openButton, 0)
+        boxsizer.Add(resignButton,0)
         panel.SetSizer(boxsizer)
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
@@ -182,41 +181,41 @@ class UserDialog(wx.Dialog):
 
         # resignButton.Bind(wx.EVT_BUTTON, self.onClickResign)
         openButton.Bind(wx.EVT_BUTTON, self.onClickOpen)
+
     # def onClickResign(self, event):
-    #     self.Username = self.UserText.GetValue()
-    #     self.password = self.pwText.GetValue()
-    #     modal = RootDialog(self)
-    #     modal.ShowModal()
-    #     flag = modal.flag_ok
-    #     modal.Destroy()
-    #     if flag:
-    #         # for User_n in self.users:
-    #         #     if self.Username == User_n:
-    #         #         self.StatusText.SetLabel('User is existed!')
-    #         #         pass
-    #
-    #         data = open("./Users/Users.txt", 'a')
-    #         try:
-    #             str = self.Username + ':' + self.password
-    #             bit_data = self.pc.encrypt(str)
-    #             write_data = '\n' + bit_data.decode()
-    #             data.write(write_data)
-    #             data.close()
-    #         except:
-    #             print('write error')
-    #         self.users.append(self.Username)
-    #         self.passwords.append(self.password)
-    #     else:
-    #         print('root error')
-    #
-    #     print('resign')
+    #     # self.Username = self.UserText.GetValue()
+    #     # self.password = self.pwText.GetValue()
+    #     # modal = RootDialog(self)
+    #     # modal.ShowModal()
+    #     # flag = modal.flag_ok
+    #     # modal.Destroy()
+    #     # if flag:
+    #     #     # for User_n in self.users:
+    #     #     #     if self.Username == User_n:
+    #     #     #         self.StatusText.SetLabel('User is existed!')
+    #     #     #         pass
+    #     #
+    #     #     data = open("./Users/Users.txt", 'a')
+    #     #     try:
+    #     #         str = self.Username + ':' + self.password
+    #     #         bit_data = self.pc.encrypt(str)
+    #     #         write_data = '\n' + bit_data.decode()
+    #     #         data.write(write_data)
+    #     #         data.close()
+    #     #     except:
+    #     #         print('write error')
+    #     #     self.users.append(self.Username)
+    #     #     self.passwords.append(self.password)
+    #     # else:
+    #     #     print('root error')
+    #     print('cancel')
 
     def onClickOpen(self, event):
         self.Username = self.UserText.GetValue()
         self.password = self.pwText.GetValue()
         try:
-            idn = Users.users.index(self.Username)
-            if self.password == Users.passwords[idn]:
+            idn = self.users.index(self.Username)
+            if self.password == self.passwords[idn]:
                 str = 'opened! Wellcome '+ self.Username
                 self.StatusText.SetLabel(str)
             else:
