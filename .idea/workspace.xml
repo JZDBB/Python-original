@@ -14,16 +14,15 @@
       <file leaf-file-name="recognize.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/face_recognition/recognize.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="91">
-              <caret line="53" column="21" lean-forward="false" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
+            <state relative-caret-position="106">
+              <caret line="127" column="75" lean-forward="false" selection-start-line="127" selection-start-column="75" selection-end-line="127" selection-end-column="75" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
                 <element signature="e#181#1082#0" expanded="false" />
                 <element signature="e#1122#1597#0" expanded="false" />
-                <element signature="e#4153#6135#0" expanded="false" />
-                <element signature="e#6160#7453#0" expanded="false" />
-                <element signature="e#7472#9690#0" expanded="false" />
-                <element signature="e#8537#8624#0" expanded="false" />
+                <element signature="e#6282#7575#0" expanded="false" />
+                <element signature="e#7594#9812#0" expanded="false" />
+                <element signature="e#8659#8746#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -32,8 +31,8 @@
       <file leaf-file-name="dialog_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dialog_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="6" column="50" lean-forward="false" selection-start-line="6" selection-start-column="47" selection-end-line="6" selection-end-column="50" />
+            <state relative-caret-position="355">
+              <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -42,13 +41,12 @@
       <file leaf-file-name="facc_recognition.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/facc_recognition.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="128" column="21" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="128" selection-end-column="21" />
+            <state relative-caret-position="553">
+              <caret line="175" column="22" lean-forward="true" selection-start-line="175" selection-start-column="22" selection-end-line="175" selection-end-column="22" />
               <folding>
                 <element signature="e#357#371#0" expanded="false" />
                 <element signature="e#963#1864#0" expanded="false" />
                 <element signature="e#1899#4381#0" expanded="false" />
-                <element signature="e#4416#8035#0" expanded="false" />
                 <element signature="e#6468#6501#0" expanded="false" />
                 <element signature="e#8068#8354#0" expanded="false" />
                 <element signature="e#8389#9009#0" expanded="false" />
@@ -127,18 +125,18 @@
         <option value="$PROJECT_DIR$/coding.txt" />
         <option value="$PROJECT_DIR$/prpcrypt.py" />
         <option value="$PROJECT_DIR$/face_recognition.py" />
-        <option value="$PROJECT_DIR$/dialog_test.py" />
         <option value="$PROJECT_DIR$/USers.py" />
         <option value="$PROJECT_DIR$/face_recognition/main.py" />
         <option value="$PROJECT_DIR$/Users/Users.txt" />
         <option value="$PROJECT_DIR$/coding_test.py" />
         <option value="$PROJECT_DIR$/test_parser.py" />
         <option value="$PROJECT_DIR$/facc_recognition.py" />
+        <option value="$PROJECT_DIR$/dialog_test.py" />
         <option value="$PROJECT_DIR$/face_recognition/recognize.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="73" />
     <option name="y" value="-7" />
     <option name="width" value="1261" />
@@ -364,7 +362,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="73" y="-7" width="1289" height="777" extended-state="7" />
+    <frame x="73" y="-7" width="1289" height="777" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24164724" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -627,15 +625,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dialog_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/facc_recognition.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="128" column="21" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="128" selection-end-column="21" />
+        <state relative-caret-position="553">
+          <caret line="175" column="22" lean-forward="true" selection-start-line="175" selection-start-column="22" selection-end-line="175" selection-end-column="22" />
           <folding>
             <element signature="e#357#371#0" expanded="false" />
             <element signature="e#963#1864#0" expanded="false" />
             <element signature="e#1899#4381#0" expanded="false" />
-            <element signature="e#4416#8035#0" expanded="false" />
             <element signature="e#6468#6501#0" expanded="false" />
             <element signature="e#8068#8354#0" expanded="false" />
             <element signature="e#8389#9009#0" expanded="false" />
@@ -651,26 +656,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dialog_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="6" column="50" lean-forward="false" selection-start-line="6" selection-start-column="47" selection-end-line="6" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/face_recognition/recognize.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="91">
-          <caret line="53" column="21" lean-forward="false" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
+        <state relative-caret-position="106">
+          <caret line="127" column="75" lean-forward="false" selection-start-line="127" selection-start-column="75" selection-end-line="127" selection-end-column="75" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
             <element signature="e#181#1082#0" expanded="false" />
             <element signature="e#1122#1597#0" expanded="false" />
-            <element signature="e#4153#6135#0" expanded="false" />
-            <element signature="e#6160#7453#0" expanded="false" />
-            <element signature="e#7472#9690#0" expanded="false" />
-            <element signature="e#8537#8624#0" expanded="false" />
+            <element signature="e#6282#7575#0" expanded="false" />
+            <element signature="e#7594#9812#0" expanded="false" />
+            <element signature="e#8659#8746#0" expanded="false" />
           </folding>
         </state>
       </provider>

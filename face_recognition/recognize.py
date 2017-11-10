@@ -119,19 +119,21 @@ class RootDialog(wx.Dialog):
 class UserDialog(wx.Dialog):
     def __init__(self):
         wx.Dialog.__init__(self, None, title='Sign in', size=(300, 200))
+        panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
         okButton = wx.Button(self, wx.ID_OK, 'OK', pos=(20, 120))
         cancelButton = wx.Button(self, wx.ID_CANCEL, 'Cancel', pos=(100, 120))
         staticTextname = wx.StaticText(self, -1, label='Username', pos=(10, 10))
-        self.nameText = wx.TextCtrl(self, -1, size=(110, 30))
-        staticTextpw = wx.StaticText(self, -1, label='Password', pos=(10, 50))
-        self.pwText = wx.TextCtrl(self, -1, size=(110, 30))
+        self.nameText = wx.TextCtrl(self, value='', pos=(10, 30), size=(110, 30))
+        staticTextpw = wx.StaticText(self, -1, label='Password', pos=(10, 60))
+        self.pwText = wx.TextCtrl(self, value='', pos=(10, 80),size=(110, 30))
         sizer.Add(staticTextname, 0)
         sizer.Add(self.nameText, 0)
         sizer.Add(staticTextpw, 0)
         sizer.Add(self.pwText, 0)
+        # self.SetSizer(sizer)
 
-        self.StatusText = wx.StaticText(self, -1, '')
+        self.StatusText = wx.StaticText(self, -1, '', pos=(10, 150))
 
         self.users = []
         self.passwords = []
@@ -154,7 +156,7 @@ class UserDialog(wx.Dialog):
         except:
             print('error')
 
-        okButton.Bind(wx.EVT_BUTTON, wx.onClickOK)
+        okButton.Bind(wx.EVT_BUTTON, self.onClickOK)
 
     def onClickOK(self, event):
         user = self.nameText.GetValue()
