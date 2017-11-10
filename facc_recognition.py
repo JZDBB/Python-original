@@ -2,7 +2,7 @@
 #2.Root密码登录未完成，全局的用户密码登录有问题（完成）
 #3.在删除图片后以及相应的face_encoding后仍然可以识别该人（bug 解决）
 #4.Dialog不稳定，有时容易和视频一起卡顿
-#5.在open的时候Users有问题时，退不出登录界面
+#5.在open的时候Users有问题时，退不出登录界面(完成)
 
 import face_recognition
 from wx.lib import statbmp
@@ -159,8 +159,8 @@ class UserDialog(wx.Dialog):
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
         self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
-        resignButton = wx.Button(panel, wx.ID_CANCEL, label='registered', pos=(110, 115), size=(110, 30))
-        openButton = wx.Button(panel, label='sign in', pos=(0, 115), size=(110,30))
+        # resignButton = wx.Button(panel, wx.ID_CANCEL, label='registered', pos=(110, 115), size=(110, 30))
+        openButton = wx.Button(panel, label='sign in', pos=(60, 115), size=(110,30))
         self.StatusText = wx.StaticText(panel, -1, '')
         sizer.Add(userStaticText, 0)
         sizer.Add(self.UserText, 0)
@@ -170,7 +170,7 @@ class UserDialog(wx.Dialog):
 
         boxsizer = wx.BoxSizer(wx.HORIZONTAL)
         boxsizer.Add(openButton, 0)
-        boxsizer.Add(resignButton,0)
+        # boxsizer.Add(resignButton,0)
         panel.SetSizer(boxsizer)
         # sizer.Add(resignButton, 0)
         # sizer.Add(openButton, 0)
@@ -235,9 +235,9 @@ class WarnDialog(wx.Dialog):
         wx.Dialog.__init__(self, None, -1, 'Warning', size=(300, 90))
         static1 = wx.StaticText(self, -1, label='Can not open the door!', pos=(15, 10))
         static2 = wx.StaticText(self, -1, label='Please use password to enter!', pos=(15, 30))
-        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 50))
+        okButton = wx.Button(self, label='OK', pos=(30, 50))
         okButton.SetDefault()
-        # quitButton = wx.Button(self, wx.ID_CANCEL, pos = (150, 50))
+        quitButton = wx.Button(self, wx.ID_CANCEL, label='Cancel', pos = (150, 50))
 
         okButton.Bind(wx.EVT_BUTTON, self.OnClickPass)
     def OnClickPass(self, event):
@@ -366,7 +366,9 @@ class ShowCapture(wx.Frame):
                 modal.Destroy()
             elif self.count >2:
                 modal = WarnDialog()
-                modal.ShowModal()
+                result = modal.ShowModal()
+                if result == wx.ID_CANCEL:
+                    print('cancel')
                 modal.Destroy()
                 # self.timer.Start(1000. / self.fps)
             else:
