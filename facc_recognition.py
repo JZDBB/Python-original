@@ -225,9 +225,9 @@ class UserDialog(wx.Dialog):
 
 class OkDialog(wx.Dialog):
     def __init__(self):
-        wx.Dialog.__init__(self, None, -1, 'Open Dialog', size=(300, 100))
-        static = wx.StaticText(self, -1, label='Hello World!', pos=(10, 10))
-        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 30))
+        wx.Dialog.__init__(self, None, -1, 'Open Dialog', size=(200, 100))
+        static = wx.StaticText(self, -1, label='the door is opened!\n  Wellcome!', pos=(10, 10))
+        okButton = wx.Button(self, wx.ID_OK, "OK", pos=(30, 60))
         okButton.SetDefault()
 
 class WarnDialog(wx.Dialog):
