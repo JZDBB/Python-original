@@ -29,7 +29,7 @@ class prpcrypt():
     def decrypt(self, text):
         cryptor = AES.new(self.key, self.mode, self.key)
         plain_text = cryptor.decrypt(a2b_hex(text))
-        print(plain_text)
+        # print(plain_text)
         strip_text = plain_text.rstrip()
         str_text = strip_text.decode()
         return str_text
@@ -92,7 +92,7 @@ class RootDialog(wx.Dialog):
             pw0 = open("./Users/Root.txt", 'r').read()
             pw1 = pw0.encode(encoding='utf-8')
             rootPassword = self.pc.decrypt(pw1)
-            print(rootPassword)
+            # print(rootPassword)
         except IOError:
             print('The datafile is missing!')
         readpassword = self.RootText.GetValue()
@@ -118,22 +118,24 @@ class RootDialog(wx.Dialog):
 
 class UserDialog(wx.Dialog):
     def __init__(self):
-        wx.Dialog.__init__(self, None, title='Sign in', size=(300, 200))
+        wx.Dialog.__init__(self, None, title='Sign in', size=(280, 180))
         panel = wx.Panel(self, -1)
         sizer = wx.BoxSizer(wx.VERTICAL)
         okButton = wx.Button(self, wx.ID_OK, 'OK', pos=(20, 120))
-        cancelButton = wx.Button(self, wx.ID_CANCEL, 'Cancel', pos=(100, 120))
-        staticTextname = wx.StaticText(self, -1, label='Username', pos=(10, 10))
-        self.nameText = wx.TextCtrl(self, value='', pos=(10, 30), size=(110, 30))
-        staticTextpw = wx.StaticText(self, -1, label='Password', pos=(10, 60))
-        self.pwText = wx.TextCtrl(self, value='', pos=(10, 80),size=(110, 30))
+        okButton.SetDefault()
+        cancelButton = wx.Button(self, wx.ID_CANCEL, 'Cancel', pos=(150, 120))
+        staticTextname = wx.StaticText(self, -1, label='Username', pos=(20, 10))
+        self.nameText = wx.TextCtrl(self, value='', pos=(20, 30), size=(160, 30))
+        staticTextpw = wx.StaticText(self, -1, label='Password', pos=(20, 60))
+        self.pwText = wx.TextCtrl(self, value='', pos=(20, 80),size=(160, 30))
+        self.StatusText = wx.StaticText(self, -1, '', pos=(20, 150))
+
         sizer.Add(staticTextname, 0)
         sizer.Add(self.nameText, 0)
         sizer.Add(staticTextpw, 0)
         sizer.Add(self.pwText, 0)
+        sizer.Add(self.StatusText, 0)
         # self.SetSizer(sizer)
-
-        self.StatusText = wx.StaticText(self, -1, '', pos=(10, 150))
 
         self.users = []
         self.passwords = []
@@ -149,7 +151,7 @@ class UserDialog(wx.Dialog):
                     (user, pw) = decode_line.split(':', 1)
                     self.users.append(user)
                     self.passwords.append(pw)
-                    print(user + pw)
+                    # print(user + pw)
                 except ValueError:
                     pass
             data.close()
