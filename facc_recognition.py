@@ -3,6 +3,8 @@
 #3.在删除图片后以及相应的face_encoding后仍然可以识别该人（bug 解决）
 #4.Dialog不稳定，有时容易和视频一起卡顿
 #5.在open的时候Users有问题时，退不出登录界面(完成)
+#6.密码输入隐藏（完成）
+#7.检索users提醒 (完成)
 
 import face_recognition
 from wx.lib import statbmp
@@ -68,16 +70,36 @@ class RootDialog(wx.Dialog):
         panel = wx.Panel(self, -1)
 
         self.flag_ok = 0
+
+        self.users = []
+        self.passwords = []
         self.pc = prpcrypt('keys1234keys1234')
+
+        try:
+            data = open("./Users/Users.txt", 'r')
+            for each_line in data:
+                Line = each_line.replace('\n', '')
+                line = Line.encode(encoding='utf-8')
+                try:
+                    decode_line = self.pc.decrypt(line)
+                    (user, pw) = decode_line.split(':', 1)
+                    self.users.append(user)
+                    self.passwords.append(pw)
+                    print(user + pw)
+                except ValueError:
+                    pass
+            data.close()
+        except IOError:
+            print('decode error!')
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         userStaticText0 = wx.StaticText(panel, -1, 'Username:')
         self.UserText0 = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText0 = wx.StaticText(panel, -1, 'Password:')
-        self.pwText0 = wx.TextCtrl(panel, value='', size=(230, 30))
+        self.pwText0 = wx.TextCtrl(panel, value='', size=(230, 30), style=wx.TE_PASSWORD)
         RootStaticText = wx.StaticText(panel, -1, 'RootPassword:')
-        self.RootText = wx.TextCtrl(panel, value='', size=(230, 30))
-        openButton = wx.Button(panel, label='root', pos=(120, 100), size=(110, 30))
+        self.RootText = wx.TextCtrl(panel, value='', size=(230, 30), style=wx.TE_PASSWORD)
+        openButton = wx.Button(panel, label='root', pos=(120, 100), size=(110, 30), style=wx.TE_PASSWORD)
         self.StatusText = wx.StaticText(panel, -1, 'Administrator login')
         sizer.Add(userStaticText0, 0)
         sizer.Add(self.UserText0, 0)
@@ -113,17 +135,21 @@ class RootDialog(wx.Dialog):
             self.StatusText.SetLabel('Accomplished!')
             self.Username0 = self.UserText0.GetValue()
             self.password0 = self.pwText0.GetValue()
-            data = open("./Users/Users.txt", 'a')
-            try:
-                str = self.Username0 + ':' + self.password0
-                bit_data = self.pc.encrypt(str)
-                write_data = '\n' + bit_data.decode()
-                data.write(write_data)
-                data.close()
-            except:
-                print('write error')
-            # Users.users.append(self.Username0)
-            # Users.passwords.append(self.password0)
+            for user in self.users:
+                if self.Username0 == user:
+                    self.StatusText.SetLabel('User already exist!')
+                else:
+                    data = open("./Users/Users.txt", 'a')
+                    try:
+                        str = self.Username0 + ':' + self.password0
+                        bit_data = self.pc.encrypt(str)
+                        write_data = '\n' + bit_data.decode()
+                        data.write(write_data)
+                        data.close()
+                    except:
+                        print('write error')
+                        # Users.users.append(self.Username0)
+                        # Users.passwords.append(self.password0)
         else:
             self.StatusText.SetLabel('Wrong password!')
         print('root')
@@ -158,7 +184,7 @@ class UserDialog(wx.Dialog):
         userStaticText = wx.StaticText(panel, -1, 'Username:')
         self.UserText = wx.TextCtrl(panel, value='', size=(230, 30))
         pwStaticText = wx.StaticText(panel, -1, 'Password:')
-        self.pwText = wx.TextCtrl(panel, value='', size=(230, 30))
+        self.pwText = wx.TextCtrl(panel, value='', size=(230, 30), style=wx.TE_PASSWORD)
         # resignButton = wx.Button(panel, wx.ID_CANCEL, label='registered', pos=(110, 115), size=(110, 30))
         openButton = wx.Button(panel, label='sign in', pos=(60, 115), size=(110,30))
         self.StatusText = wx.StaticText(panel, -1, '')
