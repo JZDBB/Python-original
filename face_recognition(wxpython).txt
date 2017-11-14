@@ -1,0 +1,24 @@
+face_recognition_demo(python):
+https://github.com/ageitgey/face_recognition
+
+wxpython:
+1、steps(Frame->class Dialog相同):
+BoxSizer -> Ctrl(插件添加，设置属性等) -> 设置窗口窗体 -> 编辑EVT绑定(Bind) -> 
+触发EVT函数编写
+
+2、main:
+App = wx.App()
+Frame:
+	frame = ShowCapture(参数) -> 新建的frame类
+	frame.Show()
+Dialog:
+	model = UserDialog(参数) -> 新建的Dialog类
+	result = model.ShowDialog()
+	if result == wx.ID_OK:
+		print()
+	else:
+		print()
+	model.Destroy()
+App.MainLoop()
+
+3、
